@@ -14,11 +14,11 @@
 
 		<div class="collapse navbar-collapse" id="navbarColor01">
 			<ul class="navbar-nav ml-auto">
-				<li class="nav-item active">
-					<a class="nav-link" href="#">Login <span class="sr-only">(current)</span></a>
-				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="/signup/">Sign Up</a>
+					<a class="nav-link" href="/login/">Login</a>
+				</li>
+				<li class="nav-item active">
+					<a class="nav-link" href="/signup/">Sign Up <span class="sr-only">(current)</span></a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="#">Pricing</a>
@@ -32,7 +32,7 @@
 	<div class="container mt-5">
 		<div class="row h-100 justify-content-center align-items-center mt-5">
 			<div class="col-4 mt-5">
-				<legend class="text-center text-primary h1 mb-5">Login</legend>
+				<legend class="text-center text-primary h1 mb-5">Sign Up</legend>
 				{% if status %}
 				<div class="alert alert-dismissible alert-danger" id="form-error">
 					<button type="button" class="close" onclick="$('#form-error').slideUp()">&times;</button>
@@ -51,7 +51,7 @@
 						<input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
 					</div>
 					<div class="text-center mt-5">
-						<button type="button" class="btn btn-info">Forgot Password?</button>
+						<a href="/login/" class="btn btn-info">Already have account?</a>
 						<button type="submit" class="btn btn-success">Submit</button>
 					</div>
 				</form>
