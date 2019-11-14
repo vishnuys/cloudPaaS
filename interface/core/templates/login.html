@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Cloud PaaS</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}">
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+		<a class="navbar-brand" href="#">Cloud PaaS</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarColor01">
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item active">
+					<a class="nav-link" href="#">Login <span class="sr-only">(current)</span></a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">Sign Up</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">Pricing</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">About</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+	<div class="container mt-5">
+		<div class="row h-100 justify-content-center align-items-center mt-5">
+			<div class="col-4 mt-5">
+				<legend class="text-center text-primary h1 mb-5">Login</legend>
+				{% if status %}
+				<div class="alert alert-dismissible alert-danger" id="form-error">
+					<button type="button" class="close" onclick="$('#form-error').slideUp()">&times;</button>
+					<strong>Invalid Username or Password!</strong>
+					<p class="mb-0">Please check the entered credentials and try again.</p>
+				</div>
+				{% endif %}
+				<form method="POST">
+					{% csrf_token %}
+					<div class="form-group">
+						<label for="username">Username</label>
+						<input type="text" class="form-control" name="username" id="username" placeholder="Username" required>
+					</div>
+					<div class="form-group">
+						<label for="password">Password</label>
+						<input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+					</div>
+					<div class="text-center mt-5">
+						<button type="button" class="btn btn-info">Forgot Password?</button>
+						<button type="submit" class="btn btn-success">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="{% static 'jquery-3.4.1.min.js'%}"></script>
+	<script type="text/javascript" src="{% static 'popper.min.js'%}"></script>
+	<script type="text/javascript" src="{% static 'bootstrap.min.js'%}"></script>
+</body>
+</html>
