@@ -20,37 +20,107 @@
 			</ul>
 		</div>
 	</nav>
-	<div class="container mt-5">
+	<div class="container mt-5 mx-0">
 		<div class="row h-100 justify-content-center align-items-center mt-5">
-			<div class="col-4 mt-5">
-				<legend class="text-center text-primary h1 mb-5">Login</legend>
-				{% if status %}
-				<div class="alert alert-dismissible alert-danger" id="form-error">
-					<button type="button" class="close" onclick="$('#form-error').slideUp()">&times;</button>
-					<strong>Invalid Username or Password!</strong>
-					<p class="mb-0">Please check the entered credentials and try again.</p>
+			<div class="col-4">
+				<div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+					<a class="nav-link active h4" id="v-pills-jobs-tab" data-toggle="pill" href="#v-pills-jobs" role="tab" aria-controls="v-pills-jobs" aria-selected="true">Jobs</a>
+					<a class="nav-link h4" id="v-pills-results-tab" data-toggle="pill" href="#v-pills-results" role="tab" aria-controls="v-pills-results" aria-selected="false">Results</a>
+					<a class="nav-link h4" id="v-pills-usage-tab" data-toggle="pill" href="#v-pills-usage" role="tab" aria-controls="v-pills-usage" aria-selected="false">Usage</a>
+					<a class="nav-link h4" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</a>
 				</div>
-				{% endif %}
-				<form method="POST">
-					{% csrf_token %}
+			</div>
+			<div class="col-8">
+				<div class="tab-content w-100" id="v-pills-tabContent">
+					<div class="tab-pane fade show active jumbotron" id="v-pills-jobs" role="tabpanel" aria-labelledby="v-pills-jobs-tab">
+						<div class="row">
+							<div class="col">
+								<h4 class="text-center">No Jobs available. Please start a job to proceed</h4>
+								<div class="text-center">
+									<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">New Job</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade jumbotron" id="v-pills-results" role="tabpanel" aria-labelledby="v-pills-results-tab">...</div>
+					<div class="tab-pane fade jumbotron" id="v-pills-usage" role="tabpanel" aria-labelledby="v-pills-usage-tab">...</div>
+					<div class="tab-pane fade jumbotron" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">...</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalCenterTitle">New Job</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
 					<div class="form-group">
-						<label for="username">Username</label>
-						<input type="text" class="form-control" name="username" id="username" placeholder="Username" required>
+						<label for="jobname">Job Name</label>
+						<input type="text" class="form-control" name="jobname" id="jobname" placeholder="" required>
 					</div>
 					<div class="form-group">
-						<label for="password">Password</label>
-						<input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+						<label for="password">Data Source</label>
+						<div class="btn-group btn-group-toggle ml-5" data-toggle="buttons">
+							<label class="btn btn-secondary active" onclick="showstatic()">
+								<input type="radio" name="datatype" id="data-static" autocomplete="off" checked value="static"> Static
+							</label>
+							<label class="btn btn-secondary" onclick="showrealtime()">
+								<input type="radio" name="datatype" id="data-realtime" autocomplete="off" value="realtime"> Realtime
+							</label>
+						</div>
 					</div>
-					<div class="text-center mt-5">
-						<button type="button" class="btn btn-info">Forgot Password?</button>
-						<button type="submit" class="btn btn-success">Submit</button>
+					<div class="form-group" id="static-group">
+						<label for="file-doc">File to Upload</label>
+						<div class="input-group">
+							<label class="input-group-btn">
+								<span class="btn btn-primary">
+									Choose File <input type="file" id="file-doc" name="file-doc" style="display: none;">
+								</span>
+							</label>
+							<input type="text" class="form-control" id="file-name" placeholder="Select the file" readonly required>
+						</div>
 					</div>
-				</form>
+					<div class="form-group" id="realtime-group" style="display: none;">
+						<label for="streamlink">Data Stream URL</label>
+						<input type="text" class="form-control" name="streamlink" id="streamlink" placeholder="" required>
+					</div>
+					<div class="form-group">
+						<label for="services">Services Required</label>
+						<div class="custom-control custom-checkbox">
+							<input type="checkbox" class="custom-control-input" id="processing-checkbox" onchange="serviceChecked('Processing')">
+							<label class="custom-control-label" for="processing-checkbox">Processing</label>
+						</div>
+						<div class="custom-control custom-checkbox">
+							<input type="checkbox" class="custom-control-input" id="analytics-checkbox" onchange="serviceChecked('Analytics')">
+							<label class="custom-control-label" for="analytics-checkbox">Analytics</label>
+						</div>
+						<div class="custom-control custom-checkbox">
+							<input type="checkbox" class="custom-control-input" id="storage-checkbox" onchange="serviceChecked('Storage')">
+							<label class="custom-control-label" for="storage-checkbox">Storage</label>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="service-order">Services Order</label>
+						<div class="d-inline-block" id="order-field">
+							
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-primary">Start Job</button>
+				</div>
 			</div>
 		</div>
 	</div>
 	<script type="text/javascript" src="{% static 'jquery-3.4.1.min.js'%}"></script>
 	<script type="text/javascript" src="{% static 'popper.min.js'%}"></script>
 	<script type="text/javascript" src="{% static 'bootstrap.min.js'%}"></script>
+	<script type="text/javascript" src="{% static 'user.js'%}"></script>
 </body>
 </html>
