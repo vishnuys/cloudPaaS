@@ -72,7 +72,9 @@ class MySubscribeCallback(SubscribeCallback):
 		# handle incoming messages
         print(message)
         #producer = KafkaProducer(bootstrap_servers='localhost:9092')
-        producer.send(publish_topic,json.dumps(message))
+        new_dict = {}
+        new_dict['data'] = message
+        producer.send(publish_topic, new_dict)
         # Asynchronous by default
         producer.flush()
 		
