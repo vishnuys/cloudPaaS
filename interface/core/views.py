@@ -2,7 +2,6 @@ import os
 import json
 from IPython import embed
 from .models import Job, Node
-from kafka import KafkaProducer
 from interface.settings import ARCHIVE_DIR
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
@@ -12,8 +11,6 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseBadRequest
-
-producer = KafkaProducer(bootstrap_servers='172.17.48.181:9092')
 
 
 # Create your views here.
@@ -109,6 +106,4 @@ class UserPage(TemplateView):
             'node_id': nodeid,
             'job_id': job_model.id
         }
-        producer.send('job_queue', str.encode(json.dumps(message)))
-        producer.flush()
         return HttpResponse('Success')
