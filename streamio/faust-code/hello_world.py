@@ -1,16 +1,23 @@
 import faust
+import sys
+
+app_name = 'hello'
+input_topic_str = 'input_first'
+output_topic_str = 'input_second'
+kafka_broker = 'kafka://localhost:9092'
 
 app = faust.App(
-	'hello-world',
-	broker='kafka://172.17.48.132:9092',
-	value_serializer='raw'
+	app_name,
+	broker= kafka_broker,
+	value_serializer = 'raw',
 )
 
-input_topic = app.topic('input_hello')
-output_topic = app.topic('output_hello')
+input_topic = app.topic(input_topic_str)
+output_topic = app.topic(output_topic_str)
 
 @app.agent(input_topic)
 async def process(stream):
     async for value in stream:
+        print(value)
         await output_topic.send(value=value)
 
