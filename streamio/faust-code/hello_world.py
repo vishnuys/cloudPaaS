@@ -15,9 +15,9 @@ app = faust.App(
 input_topic = app.topic(input_topic_str)
 output_topic = app.topic(output_topic_str)
 
+
 @app.agent(input_topic)
 async def process(stream):
     async for value in stream:
         print(value)
         await output_topic.send(value=value)
-

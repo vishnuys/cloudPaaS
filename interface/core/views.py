@@ -1,11 +1,19 @@
+import os
+import json
 from IPython import embed
+from .models import Job, Node
+from kafka import KafkaProducer
+from interface.settings import ARCHIVE_DIR
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
-from django.http import HttpResponseBadRequest
+from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponse, HttpResponseBadRequest
+
+producer = KafkaProducer(bootstrap_servers='172.17.48.181:9092')
 
 
 # Create your views here.
@@ -70,7 +78,37 @@ class AdminPage(TemplateView):
         return render(request, 'admin.html')
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class UserPage(TemplateView):
 
     def get(self, request):
         return render(request, 'user.html')
+
+    def post(self, request):
+        jobname = request.POST.get('jobname')
+        datatype = request.POST.get('datatype')
+        serviceslist = request.POST.get('serviceslist')
+        servicesjson = json.loads(serviceslist)
+        file = request.FILES['file']
+        filepath = os.path.join(ARCHIVE_DIR, file.name)
+        with open(filepath, 'wb') as fp:
+            for chunk in file.chunks():
+                fp.write(chunk)
+        job_model = Job(name=jobname, data_type=datatype, user=request.user, services_order=serviceslist, filepath=filepath)
+        nodes = Node.objects.all()
+        nodeid = None
+        for node in nodes:
+            if node.load == 'LOW':
+                job_model.node_id = node
+                job_model.save()
+                nodeid = node.number
+
+        message = {
+            'user_id': request.user.id,
+            'topology': servicesjson,
+            'node_id': nodeid,
+            'job_id': job_model.id
+        }
+        producer.send('job_queue', str.encode(json.dumps(message)))
+        producer.flush()
+        return HttpResponse('Success')
