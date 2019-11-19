@@ -1,7 +1,11 @@
 import os
+import csv
 import json
+import pika
+import threading
 from IPython import embed
 from .models import Job, Node
+from helper.py import job_accept_cb
 from interface.settings import ARCHIVE_DIR
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
@@ -34,8 +38,7 @@ class LoginPage(TemplateView):
 class SignUpPage(TemplateView):
 
     def get(self, request):
-        return render(request, "signup.html")
-
+        return render(request, "signup.html") 
     def post(self, request):
         uname = request.POST.get('username')
         pwd = request.POST.get('password')
@@ -86,12 +89,17 @@ class UserPage(TemplateView):
         datatype = request.POST.get('datatype')
         serviceslist = request.POST.get('serviceslist')
         servicesjson = json.loads(serviceslist)
-        file = request.FILES['file']
+        file_ = request.FILES['file']
         filepath = os.path.join(ARCHIVE_DIR, file.name)
         with open(filepath, 'wb') as fp:
-            for chunk in file.chunks():
+            for chunk in file_.chunks():
                 fp.write(chunk)
-        job_model = Job(name=jobname, data_type=datatype, user=request.user, services_order=serviceslist, filepath=filepath)
+        
+        #with open(filepath) as csvfile:
+        #    reader = csv.DictReader(csvfile)
+        #    for row in reader:
+                			
+		job_model = Job(name=jobname, data_type=datatype, user=request.user, services_order=serviceslist, filepath=filepath)
         nodes = Node.objects.all()
         nodeid = None
         for node in nodes:
@@ -99,11 +107,21 @@ class UserPage(TemplateView):
                 job_model.node_id = node
                 job_model.save()
                 nodeid = node.number
-
         message = {
-            'user_id': request.user.id,
-            'topology': servicesjson,
-            'node_id': nodeid,
-            'job_id': job_model.id
+            'jobid': job_model.id,
+            'topology': servicesjson
         }
+		connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        channel = connection.channel()
+        channel.queue_declare(queue='job_queue')
+        channel.basic_publish(exchange='', routing_key='job_queue', body=json.dumps(message))
+        connection.close()
+        connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        channel = connection.channel()
+        channel.queue_declare(queue='job_accept_queue')
+        channel.channel.basic_consume(queue='job_accept_queue',
+                      auto_ack=True,
+                      on_message_callback=job_accept_cb)
+        x = threading.Thread(channel.start_consuming)
+		x.start()
         return HttpResponse('Success')
