@@ -13,7 +13,7 @@ channel.queue_declare(queue=job_queue)
 
 def job_message_cb(ch, method, properties, body):
 	job_msg = json.loads(body)
-	job_id = job_msg['jobid']
+	job_id = str(job_msg['jobid'])
 	job_operations = job_msg['topology']
 	
 	print("[message recieved] jobID: " + job_id + " building pipeline --------------------> " + str(job_operations))

@@ -5,7 +5,7 @@ import pika
 import threading
 from IPython import embed
 from .models import Job, Node
-from helper.py import job_accept_cb
+from .helper import job_accept_cb
 from interface.settings import ARCHIVE_DIR
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
@@ -87,26 +87,23 @@ class UserPage(TemplateView):
     def post(self, request):
         jobname = request.POST.get('jobname')
         datatype = request.POST.get('datatype')
+        colname = request.POST.get('colname')
         serviceslist = request.POST.get('serviceslist')
         servicesjson = json.loads(serviceslist)
-        file_ = request.FILES['file']
+        file = request.FILES['file']
         filepath = os.path.join(ARCHIVE_DIR, file.name)
         with open(filepath, 'wb') as fp:
-            for chunk in file_.chunks():
+            for chunk in file.chunks():
                 fp.write(chunk)
         
         #with open(filepath) as csvfile:
         #    reader = csv.DictReader(csvfile)
         #    for row in reader:
                 			
-        job_model = Job(name=jobname, data_type=datatype, user=request.user, services_order=serviceslist, filepath=filepath)
-        nodes = Node.objects.all()
-        nodeid = None
-        for node in nodes:
-            if node.load == 'LOW':
-                job_model.node_id = node
-                job_model.save()
-                nodeid = node.number
+        job_model = Job(name=jobname, data_type=datatype, user=request.user, services_order=serviceslist, filepath=filepath, colname=colname)
+        node = Node.objects.first()
+        job_model.node_id = node
+        job_model.save()
         message = {
             'jobid': job_model.id,
             'topology': servicesjson
@@ -119,9 +116,9 @@ class UserPage(TemplateView):
         connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
         channel = connection.channel()
         channel.queue_declare(queue='job_accept_queue')
-        channel.channel.basic_consume(queue='job_accept_queue',
+        channel.basic_consume(queue='job_accept_queue',
                       auto_ack=True,
                       on_message_callback=job_accept_cb)
-        x = threading.Thread(channel.start_consuming)
+        x = threading.Thread(target=channel.start_consuming)
         x.start()
         return HttpResponse('Success')

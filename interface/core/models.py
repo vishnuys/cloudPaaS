@@ -16,6 +16,7 @@ class Node(models.Model):
 class Job(models.Model):
     name = models.CharField(max_length=200)
     data_type = models.CharField(max_length=200)
+    colname = models.CharField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     services_order = models.CharField(max_length=200)
     node_id = models.ForeignKey(Node, on_delete=models.CASCADE)
