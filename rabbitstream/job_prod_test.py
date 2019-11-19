@@ -1,7 +1,7 @@
 import pika
 import json
 
-job = {'jobid':1, 'topology':['max','min']}
+job = {'jobid':'1', 'topology':['analytics']}
 
 conn = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 channel = conn.channel()
