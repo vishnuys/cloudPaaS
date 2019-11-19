@@ -99,7 +99,7 @@ class UserPage(TemplateView):
         #    reader = csv.DictReader(csvfile)
         #    for row in reader:
                 			
-		job_model = Job(name=jobname, data_type=datatype, user=request.user, services_order=serviceslist, filepath=filepath)
+        job_model = Job(name=jobname, data_type=datatype, user=request.user, services_order=serviceslist, filepath=filepath)
         nodes = Node.objects.all()
         nodeid = None
         for node in nodes:
@@ -111,7 +111,7 @@ class UserPage(TemplateView):
             'jobid': job_model.id,
             'topology': servicesjson
         }
-		connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
         channel = connection.channel()
         channel.queue_declare(queue='job_queue')
         channel.basic_publish(exchange='', routing_key='job_queue', body=json.dumps(message))
@@ -123,5 +123,5 @@ class UserPage(TemplateView):
                       auto_ack=True,
                       on_message_callback=job_accept_cb)
         x = threading.Thread(channel.start_consuming)
-		x.start()
+        x.start()
         return HttpResponse('Success')

@@ -4,4 +4,19 @@ import pika
 from .models import Job, Node
 
 def job_accept_cb(ch, method, properties, body):
-	for 
+	job_acc_msg = json.loads(body)
+	job_id = job_acc_msg['jobid']
+	job_instance = Job.objects.get(id=job_id)
+	output_queue = job_id + '_input'
+	with open(job_instance.filepath) as csvfile:
+		reader = csv.DictReader(csvfile)
+		for row in reader:
+			connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+			chan = connection.channel() 
+			chan.basic_publish(
+        		exchange='',
+        		routing_key = output_queue,
+				body = row[job_instance.colname])
+			connection.close()
+
+	
