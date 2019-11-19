@@ -31,12 +31,14 @@ function serviceChecked(item) {
 $('#create-job').on('click', function(event) {
 	var jobname = $('#jobname').val();
 	var datatype = $('input[name=datatype]:checked').val();
+	var colname = $('#colname').val();
 	if (datatype == 'static') {
 		var formData = new FormData();
 		formData.append('file', $('#file-doc')[0].files[0], $('#file-doc')[0].files[0].name);
 		formData.append('jobname', jobname);
 		formData.append('datatype', datatype);
 		formData.append('serviceslist', JSON.stringify(servicesList));
+		formData.append('colname', colname);
 		$.ajax({
 			method: 'POST',
 			url: '',
