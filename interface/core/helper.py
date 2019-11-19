@@ -11,7 +11,6 @@ def job_accept_cb(ch, method, properties, body):
 	with open(job_instance.filepath) as csvfile:
 		reader = csv.DictReader(csvfile)
 		for row in reader:
-			print(row)
 			connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 			chan = connection.channel() 
 			chan.basic_publish(

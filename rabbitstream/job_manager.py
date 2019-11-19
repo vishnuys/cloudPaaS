@@ -4,7 +4,7 @@ import json
 import subprocess
 
 job_queue = sys.argv[1]
-
+job_accept_queue = 'job_accept_queue'
 conn = pika.BlockingConnection(
 	pika.ConnectionParameters('localhost'))
 channel = conn.channel()
@@ -32,7 +32,17 @@ def job_message_cb(ch, method, properties, body):
 		print(popen_obj)
 
 		input_queue = op_out_queue
-	
+	connection = pika.BlockingConnection(
+    	pika.ConnectionParameters('localhost'))
+	channel_ = connection.channel()
+	job_info = {
+		'jobid': job_id
+	}
+	channel_.basic_publish(exchange='',
+                     routing_key = job_accept_queue,
+                     body = json.dumps(job_info))
+	connection.close()
+
 	print("[success] jobID: " + job_id + " pipeline built successfully!")
 
 

@@ -1,3 +1,9 @@
+# MacOS files
+.DS_Store
+
+# Archive files django
+archive_files/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
