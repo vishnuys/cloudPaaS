@@ -142,17 +142,31 @@
 					</div>
 					<div class="form-group">
 						<label for="services">Services Required <small>Select in the order you want to execute</small></label>
-						<div class="custom-control custom-checkbox">
-							<input type="checkbox" class="custom-control-input" id="processing-checkbox" onchange="serviceChecked('Processing')">
-							<label class="custom-control-label" for="processing-checkbox">Processing</label>
-						</div>
-						<div class="custom-control custom-checkbox">
-							<input type="checkbox" class="custom-control-input" id="analytics-checkbox" onchange="serviceChecked('Analytics')">
-							<label class="custom-control-label" for="analytics-checkbox">Analytics</label>
-						</div>
-						<div class="custom-control custom-checkbox">
-							<input type="checkbox" class="custom-control-input" id="storage-checkbox" onchange="serviceChecked('Storage')">
-							<label class="custom-control-label" for="storage-checkbox">Storage</label>
+						<div class="row">
+							<div class="col-6">
+								<div class="custom-control custom-checkbox">
+									<input type="checkbox" class="custom-control-input" id="min-checkbox" onchange="serviceChecked('Min')">
+									<label class="custom-control-label" for="min-checkbox">Min</label>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="custom-control custom-checkbox">
+									<input type="checkbox" class="custom-control-input" id="max-checkbox" onchange="serviceChecked('Max')">
+									<label class="custom-control-label" for="max-checkbox">Max</label>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="custom-control custom-checkbox">
+									<input type="checkbox" class="custom-control-input" id="avg-checkbox" onchange="serviceChecked('Average')">
+									<label class="custom-control-label" for="avg-checkbox">Average</label>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="custom-control custom-checkbox">
+									<input type="checkbox" class="custom-control-input" id="storage-checkbox" onchange="serviceChecked('Storage')">
+									<label class="custom-control-label" for="storage-checkbox">Storage</label>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div class="form-group">

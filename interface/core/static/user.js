@@ -32,6 +32,10 @@ $('#create-job').on('click', function(event) {
 	var jobname = $('#jobname').val();
 	var datatype = $('input[name=datatype]:checked').val();
 	var colname = $('#colname').val();
+	var services = servicesList.map(function(elem, i) {
+		var mapping = {'Max': 'max', 'Min': 'min', 'Average': 'avg', 'Storage': 'storage'};
+		return mapping[elem];
+	})
 	if (datatype == 'static') {
 		var formData = new FormData();
 		formData.append('file', $('#file-doc')[0].files[0], $('#file-doc')[0].files[0].name);
