@@ -4,6 +4,7 @@ import sys
 
 input_queue = sys.argv[1]
 output_queue = sys.argv[2]
+final_queue = sys.argv[3]
 
 conn = pika.BlockingConnection(
 	pika.ConnectionParameters('localhost'))
@@ -11,20 +12,32 @@ channel = conn.channel()
 
 channel.queue_declare(queue=input_queue)
 channel.queue_declare(queue=output_queue)
-
+channel.queue
 output_dict = {}
 
 max_val = -1000000.0
 min_val =  1000000.0
 avg_val =  0.0
 n_val = 0
+
 def update_max(ch, method, properties, body):
 	global max_val, min_val, avg_val, n_val
-
+	
 	connection = pika.BlockingConnection(
     	pika.ConnectionParameters('localhost'))
 	chan = connection.channel()
-
+	
+	if body == b'FINAL':
+		output_dict['module'] = 'analytics'
+		output_dict['max'] = max_val
+		output_dict['min'] = min_val
+		output_dict['avg'] = avg_val
+		chan.basic_publish(exchange='',routing_key = output_queue,body = 'FINAL')
+		chan.basic_publish(exchange='',routing_key = final_queue,body = json.dumps(output_dict))
+		chan.queue_delete(queue=input_queue)
+		connection.close()
+		sys.exit()
+	
 	max_val = max(max_val, float(body))
 	min_val = min(min_val, float(body))
 	avg_val = (n_val * avg_val + float(body)) / (n_val + 1)

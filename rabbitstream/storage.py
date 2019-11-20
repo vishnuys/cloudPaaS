@@ -1,6 +1,7 @@
+import os
 import pika
-import sys
 import json
+import sys
 
 input_queue = sys.argv[1]
 output_queue = sys.argv[2]
@@ -14,50 +15,50 @@ channel.queue_declare(queue=input_queue)
 channel.queue_declare(queue=output_queue)
 channel.queue_declare(queue=final_queue)
 
-last_val = {}
-max_val = -1000000.0
+
+last_message = {}
 
 
-def update_max(ch, method, properties, body):
-    global max_val, last_val
+def store_function(ch, method, properties, body):
+    global last_message
+
     connection = pika.BlockingConnection(
         pika.ConnectionParameters('localhost'))
     chan = connection.channel()
 
+    filepath = os.path.join(os.path.dirname(os.path.dirname('__file__')),
+                            'interface', 'archive_files', input_queue + '_storage')
+
     body_json = json.loads(body)
+    body_json['filepath'] = filepath
+
     val = body_json['val']
     final_op = body_json['finalop']
-    if val == b'FINAL':
-        if final_op == 'max':
-            chan.basic_publish(
-                exchange='', routing_key=final_queue,
-                body=json.dumps(last_val))
-        else:
-            chan.basic_publish(
-                exchange='', routing_key=final_queue,
-                body=json.dumps(body_json))
-    chan.queue_delete(queue=input_queue)
-    connection.close()
-    sys.exit()
+    if final_op == 'storage':
+        if val == b'FINAL':
+            chan.basic_publish(exchange='', routing_key=final_queue, body=json.dumps(body_json))
+            chan.queue_delete(queue=input_queue)
+            connection.close()
+            sys.exit()
 
-    max_val = max(max_val, float(val))
-    body_json['max'] = max_val
-    if final_op == 'max':
-        last_val = body_json
-    # print(' [x] max of %d is %d ' % (int(body), max_val))
+        last_message = body_json
+
+    with open(filepath, 'a') as fp:
+        fp.write(json.dumps(body_json))
+
     connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
     chan = connection.channel()
     chan.basic_publish(
         exchange='',
         routing_key=output_queue,
-        body=json.dumps(body_json))
+        body=body_json)
 
     connection.close()
 
 
 channel.basic_consume(queue=input_queue,
                       auto_ack=True,
-                      on_message_callback=update_max)
+                      on_message_callback=store_function)
 
-print(input_queue + ' ---->  max() ----> ' + output_queue)
+print(input_queue + '\t ---->  storage() ----> ' + output_queue)
 channel.start_consuming()

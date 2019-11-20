@@ -23,3 +23,12 @@ class Job(models.Model):
     filepath = models.CharField(max_length=200, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
+
+
+class Result(models.Model):
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    job_id = models.ForeignKey(Job, on_delete=models.CASCADE, unique=True)
+    min_val = models.FloatField(max_length=100, null=True)
+    max_val = models.FloatField(max_length=100, null=True)
+    avg_val = models.FloatField(max_length=100, null=True)
+    filepath = models.CharField(max_length=200, null=True)
