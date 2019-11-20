@@ -63,31 +63,32 @@
 							</div>
 						</div>
 					</div>
-					<div class="tab-pane fade" id="v-pills-results" role="tabpanel" aria-labelledby="v-pills-results-tab">
+					<div class="tab-pane fade px-5" id="v-pills-results" role="tabpanel" aria-labelledby="v-pills-results-tab">
 						<div class="row">
 							<div class="col">
-								<div class="text-right">
-									<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">New Job</button>
-								</div>
 								<table class="table table-striped mt-3">
 									<thead class="table-primary">
 										<tr>
 											<th>Sl. No.</th>
-											<th>Name</th>
-											<th>Services</th>
-											<th>Creation Date</th>
+											<th>Job Name</th>
+											<th>Min</th>
+											<th>Max</th>
+											<th>Average</th>
+											<th>Storage</th>
 										</tr>
 									</thead>
 									<tbody>
-										{% for job in jobs %}
+										{% for res in results %}
 										<tr>
 											<td>{{forloop.counter}}</td>
-											<td>{{job.name}}</td>
-											<td>{{job.services_order}}</td>
-											<td>{{job.date_created}}</td>
+											<td>{{res.job_name}}</td>
+											<td>{{res.min_val}}</td>
+											<td>{{res.max_val}}</td>
+											<td>{{res.avg_val}}</td>
+											<td>{{res.filepath}}</td>
 										</tr>
 										{% empty %}
-										<tr><td class="text-center" colspan="4">No Jobs available. Please start a job to proceed</td></tr>
+										<tr><td class="text-center" colspan="6">No results available yet . Please start a job or wait for the job to complete</td></tr>
 										{% endfor %}
 									</tbody>
 								</table>
@@ -105,7 +106,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title" id="exampleModalCenterTitle">New Job</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="clearform()">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
@@ -181,7 +182,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearform()">Cancel</button>
 					<button type="button" class="btn btn-primary" id="create-job">Start Job</button>
 				</div>
 			</div>

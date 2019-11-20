@@ -1,5 +1,12 @@
 var servicesList = [];
 
+function clearform() {
+	servicesList = [];
+	$('#order-field').html('');
+	$('#jobname, #colname, #file-doc, #file-name').val('');
+	$('input[type=checkbox]').prop('checked', false);
+}
+
 $('#file-doc').change(function() {
 	$('#file-name').val($('#file-doc')[0].files[0].name);
 });
@@ -41,7 +48,7 @@ $('#create-job').on('click', function(event) {
 		formData.append('file', $('#file-doc')[0].files[0], $('#file-doc')[0].files[0].name);
 		formData.append('jobname', jobname);
 		formData.append('datatype', datatype);
-		formData.append('serviceslist', JSON.stringify(servicesList));
+		formData.append('serviceslist', JSON.stringify(services));
 		formData.append('colname', colname);
 		$.ajax({
 			method: 'POST',
@@ -52,6 +59,7 @@ $('#create-job').on('click', function(event) {
 			mimeType: 'multipart/form-data',
 			processData: false,
 			success: function(data) {
+				clearform();
 				location.reload()
 			}
 		})

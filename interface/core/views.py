@@ -3,8 +3,8 @@ import json
 import pika
 import threading
 from IPython import embed
-from .models import Job, Node
 from .helper import job_accept_cb
+from .models import Job, Node, Result
 from interface.settings import ARCHIVE_DIR
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
@@ -82,6 +82,7 @@ class UserPage(TemplateView):
 
     def get(self, request):
         joblist = []
+        resultlist = []
         jobs = Job.objects.filter(user=request.user)
         for job in jobs:
             joblist.append({
@@ -89,7 +90,16 @@ class UserPage(TemplateView):
                 'services_order': "->".join(json.loads(job.services_order)),
                 'date_created': job.date_created.strftime('%D-%m-%Y %H:%M'),
             })
-        return render(request, 'user.html', {'jobs': joblist})
+        results = Result.objects.filter(user_id=request.user)
+        for res in results:
+            resultlist.append({
+                'job_id': res.job_id.name,
+                'min_val': res.min_val,
+                'max_val': res.max_val,
+                'avg_val': res.avg_val,
+                'filepath': os.path.basename(res.filepath),
+            })
+        return render(request, 'user.html', {'jobs': joblist, 'results': resultlist})
 
     def post(self, request):
         jobname = request.POST.get('jobname')
