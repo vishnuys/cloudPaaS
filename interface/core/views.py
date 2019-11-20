@@ -1,5 +1,4 @@
 import os
-import csv
 import json
 import pika
 import threading
@@ -12,7 +11,6 @@ from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseBadRequest
 
@@ -38,7 +36,8 @@ class LoginPage(TemplateView):
 class SignUpPage(TemplateView):
 
     def get(self, request):
-        return render(request, "signup.html") 
+        return render(request, "signup.html")
+
     def post(self, request):
         uname = request.POST.get('username')
         pwd = request.POST.get('password')
@@ -82,7 +81,15 @@ class AdminPage(TemplateView):
 class UserPage(TemplateView):
 
     def get(self, request):
-        return render(request, 'user.html')
+        joblist = []
+        jobs = Job.objects.filter(user=request.user)
+        for job in jobs:
+            joblist.append({
+                'name': job.name,
+                'services_order': "->".join(json.loads(job.services_order)),
+                'date_created': job.date_created.strftime('%D-%m-%Y %H:%M'),
+            })
+        return render(request, 'user.html', {'jobs': joblist})
 
     def post(self, request):
         jobname = request.POST.get('jobname')
@@ -95,11 +102,11 @@ class UserPage(TemplateView):
         with open(filepath, 'wb') as fp:
             for chunk in file.chunks():
                 fp.write(chunk)
-        
-        #with open(filepath) as csvfile:
+
+        # with open(filepath) as csvfile:
         #    reader = csv.DictReader(csvfile)
         #    for row in reader:
-                			
+
         job_model = Job(name=jobname, data_type=datatype, user=request.user, services_order=serviceslist, filepath=filepath, colname=colname)
         node = Node.objects.first()
         job_model.node_id = node
@@ -117,8 +124,8 @@ class UserPage(TemplateView):
         channel = connection.channel()
         channel.queue_declare(queue='job_accept_queue')
         channel.basic_consume(queue='job_accept_queue',
-                      auto_ack=True,
-                      on_message_callback=job_accept_cb)
+                              auto_ack=True,
+                              on_message_callback=job_accept_cb)
         x = threading.Thread(target=channel.start_consuming)
         x.start()
         return HttpResponse('Success')

@@ -48,7 +48,7 @@ $('#create-job').on('click', function(event) {
 			mimeType: 'multipart/form-data',
 			processData: false,
 			success: function(data) {
-				console.log('Success')
+				location.reload()
 			}
 		})
 	}
