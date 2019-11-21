@@ -27,7 +27,7 @@ class Job(models.Model):
 
 class Result(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    job_id = models.OneToOneField(Job, on_delete=models.CASCADE)
+    job_id = models.ForeignKey(Job, on_delete=models.CASCADE)
     min_val = models.FloatField(max_length=100, null=True)
     max_val = models.FloatField(max_length=100, null=True)
     avg_val = models.FloatField(max_length=100, null=True)

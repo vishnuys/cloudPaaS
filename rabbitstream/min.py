@@ -24,21 +24,22 @@ def update_min(ch, method, properties, body):
         pika.ConnectionParameters('localhost'))
     chan = connection.channel()
 
+    print (body)
     body_json = json.loads(body)
     val = body_json['val']
     final_op = body_json['finalop']
     if val == b'FINAL':
         if final_op == 'min':
             chan.basic_publish(
-                exchange='', routing_key=final_queue,
+                exchange='', routing_key=output_queue,
                 body=json.dumps(last_val))
         else:
             chan.basic_publish(
                 exchange='', routing_key=final_queue,
                 body=json.dumps(body_json))
-    chan.queue_delete(queue=input_queue)
-    connection.close()
-    sys.exit()
+        chan.queue_delete(queue=input_queue)
+        connection.close()
+        sys.exit()
 
     min_val = min(min_val, float(val))
     body_json['min'] = min_val

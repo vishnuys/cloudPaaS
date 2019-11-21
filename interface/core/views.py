@@ -97,7 +97,7 @@ class UserPage(TemplateView):
                 'min_val': res.min_val,
                 'max_val': res.max_val,
                 'avg_val': res.avg_val,
-                'filepath': os.path.basename(res.filepath),
+                'filepath': os.path.basename(res.filepath) if res.filepath is not None else None,
             })
         return render(request, 'user.html', {'jobs': joblist, 'results': resultlist})
 

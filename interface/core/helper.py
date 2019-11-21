@@ -2,19 +2,25 @@ import csv
 import json
 import pika
 from .models import Job, Result
+from IPython import embed
 
 
 def store_in_db_cb(ch, method, properties, body):
     dict_body = json.loads(body)
+    print (dict_body)
     job = Job.objects.get(id=dict_body['jobid'])
     result = Result(
         job_id=job,
-        user_id=job.user,
-        max_val=dict_body['max'],
-        min_val=dict_body['min'],
-        avg_val=dict_body['avg'],
-        filepath=dict_body['filepath']
+        user_id=job.user
     )
+    if 'max' in dict_body:
+        result.max_val = dict_body['max']
+    if 'min' in dict_body:
+        result.min_val = dict_body['min']
+    if 'avg' in dict_body:
+        result.avg_val = dict_body['avg']
+    if 'filepath' in dict_body:
+        result.filepath = dict_body['filepath']
     result.save()
 
 
@@ -32,6 +38,7 @@ def job_accept_cb(ch, method, properties, body):
             connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
             chan = connection.channel()
             resp = {'jobid': job_id, 'finalop': json.loads(job_instance.services_order)[-1], 'val': row[job_instance.colname]}
+            print (resp)
             chan.basic_publish(
                 exchange='',
                 routing_key=output_queue,
@@ -44,7 +51,10 @@ def job_accept_cb(ch, method, properties, body):
             chan.basic_publish(
                 exchange='',
                 routing_key=output_queue,
-                body='FINAL')
+                body=json.dumps(resp))
+            connection.close()
+            connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+            chan = connection.channel()
             chan.basic_consume(
                 queue=result_queue,
                 auto_ack=True,
