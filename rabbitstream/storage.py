@@ -26,32 +26,41 @@ def store_function(ch, method, properties, body):
         pika.ConnectionParameters('localhost'))
     chan = connection.channel()
 
-    filepath = os.path.join(os.path.dirname(os.path.dirname('__file__')),
+    filepath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                             'interface', 'archive_files', input_queue + '_storage')
 
+    print(body)
     body_json = json.loads(body)
     body_json['filepath'] = filepath
 
     val = body_json['val']
     final_op = body_json['finalop']
-    if final_op == 'storage':
-        if val == 'FINAL':
-            chan.basic_publish(exchange='', routing_key=final_queue, body=json.dumps(body_json))
-            chan.queue_delete(queue=input_queue)
-            connection.close()
-            sys.exit()
-
-        last_message = body_json
+    if val == 'FINAL':
+        if final_op == 'storage':
+            chan.basic_publish(
+                exchange='', routing_key=final_queue,
+                body=json.dumps(last_message))
+        else:
+            chan.basic_publish(
+                exchange='', routing_key=output_queue,
+                body=json.dumps(body_json))
+        chan.queue_delete(queue=input_queue)
+        connection.close()
+        sys.exit()
+        return
 
     with open(filepath, 'a') as fp:
         fp.write(json.dumps(body_json))
+
+    if final_op == 'storage':
+        last_message = body_json
 
     connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
     chan = connection.channel()
     chan.basic_publish(
         exchange='',
         routing_key=output_queue,
-        body=body_json)
+        body=json.dumps(body_json))
 
     connection.close()
 

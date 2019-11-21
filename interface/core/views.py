@@ -93,7 +93,7 @@ class UserPage(TemplateView):
         results = Result.objects.filter(user_id=request.user)
         for res in results:
             resultlist.append({
-                'job_id': res.job_id.name,
+                'job_name': res.job_id.name,
                 'min_val': res.min_val,
                 'max_val': res.max_val,
                 'avg_val': res.avg_val,

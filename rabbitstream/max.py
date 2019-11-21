@@ -30,11 +30,11 @@ def update_max(ch, method, properties, body):
     if val == 'FINAL':
         if final_op == 'max':
             chan.basic_publish(
-                exchange='', routing_key=output_queue,
+                exchange='', routing_key=final_queue,
                 body=json.dumps(last_val))
         else:
             chan.basic_publish(
-                exchange='', routing_key=final_queue,
+                exchange='', routing_key=output_queue,
                 body=json.dumps(body_json))
         chan.queue_delete(queue=input_queue)
         connection.close()

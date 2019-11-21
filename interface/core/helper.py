@@ -29,7 +29,7 @@ def job_accept_cb(ch, method, properties, body):
     job_id = job_acc_msg['jobid']
     job_instance = Job.objects.get(id=job_id)
     output_queue = job_id + '_input'
-    result_queue = job_id + '_output'
+    result_queue = job_id + '_final'
     with open(job_instance.filepath) as csvfile:
         reader = csv.DictReader(csvfile)
         count = 0
