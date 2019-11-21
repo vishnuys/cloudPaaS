@@ -42,7 +42,7 @@ def update_min(ch, method, properties, body):
         connection.close()
         sys.exit()
 
-    avg_val = (n * avg_val + val) / (n + 1)
+    avg_val = (n * avg_val + float(val)) / (n + 1)
     n += 1
     body_json['avg'] = avg_val
     if final_op == 'avg':

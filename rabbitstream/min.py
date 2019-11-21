@@ -28,8 +28,6 @@ def update_min(ch, method, properties, body):
     body_json = json.loads(body)
     val = body_json['val']
     final_op = body_json['finalop']
-    print ('Val == FINAL is :')
-    print (val == 'FINAL')
     if val == 'FINAL':
         if final_op == 'min':
             chan.basic_publish(
