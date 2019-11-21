@@ -20,35 +20,108 @@
 			</ul>
 		</div>
 	</nav>
-	<!-- <div class="container mt-5">
-		<div class="row h-100 justify-content-center align-items-center mt-5">
-			<div class="col-4 mt-5">
-				<legend class="text-center text-primary h1 mb-5">Login</legend>
-				{% if status %}
-				<div class="alert alert-dismissible alert-danger" id="form-error">
-					<button type="button" class="close" onclick="$('#form-error').slideUp()">&times;</button>
-					<strong>Invalid Username or Password!</strong>
-					<p class="mb-0">Please check the entered credentials and try again.</p>
+	<div class="container-fluid mt-5 mx-2">
+		<div class="row h-100 justify-content-center mt-5">
+			<div class="col-3">
+				<div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+					<a class="nav-link active h4" id="v-pills-jobs-tab" data-toggle="pill" href="#v-pills-jobs" role="tab" aria-controls="v-pills-jobs" aria-selected="true">Users</a>
+					<a class="nav-link h4" id="v-pills-results-tab" data-toggle="pill" href="#v-pills-results" role="tab" aria-controls="v-pills-results" aria-selected="false">Usage</a>
+					<a class="nav-link h4" id="v-pills-usage-tab" data-toggle="pill" href="#v-pills-usage" role="tab" aria-controls="v-pills-usage" aria-selected="false">Pricing</a>
+					<a class="nav-link h4" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</a>
 				</div>
-				{% endif %}
-				<form method="POST">
-					{% csrf_token %}
-					<div class="form-group">
-						<label for="username">Username</label>
-						<input type="text" class="form-control" name="username" id="username" placeholder="Username" required>
+			</div>
+			<div class="col-9">
+				<div class="tab-content w-100" id="v-pills-tabContent">
+					<div class="tab-pane fade show active px-5" id="v-pills-jobs" role="tabpanel" aria-labelledby="v-pills-jobs-tab">
+						<div class="row">
+							<div class="col">
+								<div class="text-right">
+									<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">New Job</button>
+								</div>
+								<table class="table table-striped mt-3">
+									<thead class="table-primary">
+										<tr>
+											<th>Sl. No.</th>
+											<th>User ID</th>
+											<th>User</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for usr in userlist %}
+										<tr>
+											<td>{{forloop.counter}}</td>
+											<td>{{usr.id}}</td>
+											<td>{{usr.user}}</td>
+										</tr>
+										{% empty %}
+										<tr><td class="text-center" colspan="3">No Users Found</td></tr>
+										{% endfor %}
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
-					<div class="form-group">
-						<label for="password">Password</label>
-						<input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+					<div class="tab-pane fade px-5" id="v-pills-results" role="tabpanel" aria-labelledby="v-pills-results-tab">
+						<div class="row">
+							<div class="col">
+								<table class="table table-striped mt-3">
+									<thead class="table-primary">
+										<tr>
+											<th>Total Users</th>
+											<th>Total Jobs</th>
+											<th>Total Services</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>{{userlist|length}}</td>
+											<td>{{total_jobs}}</td>
+											<td>{{total_services}}</td>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
-					<div class="text-center mt-5">
-						<button type="button" class="btn btn-info">Forgot Password?</button>
-						<button type="submit" class="btn btn-success">Submit</button>
+					<div class="tab-pane fade  px-5" id="v-pills-usage" role="tabpanel" aria-labelledby="v-pills-usage-tab">
+						<div class="row">
+							<div class="col">
+								<div class="text-right">
+									<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">New Job</button>
+								</div>
+								<table class="table table-striped mt-3">
+									<thead class="table-primary">
+										<tr>
+											<th>Sl. No.</th>
+											<th>User</th>
+											<th>Jobs</th>
+											<th>Services</th>
+											<th>Price <small>In Rs</small></th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for usr in userlist %}
+										<tr>
+											<td>{{forloop.counter}}</td>
+											<td>{{usr.user}}</td>
+											<td>{{usr.records}}</td>
+											<td>{{usr.services}}</td>
+											<td>{{usr.price}}</td>
+										</tr>
+										{% empty %}
+										<tr><td class="text-center" colspan="5">No Users Found</td></tr>
+										{% endfor %}
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
-				</form>
+					<div class="tab-pane fade jumbotron" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">...</div>
+				</div>
 			</div>
 		</div>
-	</div> -->
+	</div>
 	<script type="text/javascript" src="{% static 'jquery-3.4.1.min.js'%}"></script>
 	<script type="text/javascript" src="{% static 'popper.min.js'%}"></script>
 	<script type="text/javascript" src="{% static 'bootstrap.min.js'%}"></script>

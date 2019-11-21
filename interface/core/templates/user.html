@@ -96,14 +96,35 @@
 											</td>
 										</tr>
 										{% empty %}
-										<tr><td class="text-center" colspan="6">No results available yet . Please start a job or wait for the job to complete</td></tr>
+										<tr><td class="text-center" colspan="7">No results available yet . Please start a job or wait for the job to complete</td></tr>
 										{% endfor %}
 									</tbody>
 								</table>
 							</div>
 						</div>
 					</div>
-					<div class="tab-pane fade jumbotron" id="v-pills-usage" role="tabpanel" aria-labelledby="v-pills-usage-tab">...</div>
+					<div class="tab-pane fade px-5" id="v-pills-usage" role="tabpanel" aria-labelledby="v-pills-usage-tab">
+						<div class="row">
+							<div class="col">
+								<table class="table table-striped mt-3">
+									<thead class="table-primary">
+										<tr>
+											<th>Total Records</th>
+											<th>Total Services</th>
+											<th>Price <small>In Rs</small></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>{{usage.records}}</td>
+											<td>{{usage.services}}</td>
+											<td>{{usage.price}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
 					<div class="tab-pane fade jumbotron" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">...</div>
 				</div>
 			</div>

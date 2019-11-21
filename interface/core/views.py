@@ -75,7 +75,27 @@ class LogoutPage(TemplateView):
 class AdminPage(TemplateView):
 
     def get(self, request):
-        return render(request, 'admin.html')
+        users = User.objects.filter(is_staff=False, is_superuser=False)
+        userlist = []
+        for user in users:
+            results = Result.objects.filter(user_id=user)
+            jobs = Job.objects.filter(user_id=user)
+            counts = [x.count for x in results if x.count is not None]
+            total = sum(counts)
+            services = [len(json.loads(x.services_order)) for x in jobs]
+            services_count = sum(services)
+            price = total * services_count / 100
+            userlist.append({
+                'id': user.id,
+                'user': user.username,
+                'records': total,
+                'services': services_count,
+                'price': price
+            })
+        print(userlist)
+        total_jobs = sum([u['records'] for u in userlist])
+        total_services = sum([u['services'] for u in userlist])
+        return render(request, 'admin.html', {'userlist': userlist, 'total_jobs': total_jobs, 'total_services': total_services})
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -109,7 +129,17 @@ class UserPage(TemplateView):
                 'filename': filename,
                 'filepath': filepath,
             })
-        return render(request, 'user.html', {'jobs': joblist, 'results': resultlist})
+        counts = [x['count'] for x in resultlist if x['count']is not None]
+        total = sum(counts)
+        services = [len(json.loads(x.services_order)) for x in jobs]
+        services_count = sum(services)
+        price = total * services_count / 100
+        usage = {
+            'records': total,
+            'services': services_count,
+            'price': price
+        }
+        return render(request, 'user.html', {'jobs': joblist, 'results': resultlist, 'usage': usage})
 
     def post(self, request):
         jobname = request.POST.get('jobname')
