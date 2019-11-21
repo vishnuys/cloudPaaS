@@ -28,7 +28,8 @@ class Job(models.Model):
 class Result(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     job_id = models.ForeignKey(Job, on_delete=models.CASCADE)
-    min_val = models.FloatField(max_length=100, null=True)
-    max_val = models.FloatField(max_length=100, null=True)
-    avg_val = models.FloatField(max_length=100, null=True)
+    count = models.IntegerField(null=True)
+    min_val = models.FloatField(null=True)
+    max_val = models.FloatField(null=True)
+    avg_val = models.FloatField(null=True)
     filepath = models.CharField(max_length=200, null=True)

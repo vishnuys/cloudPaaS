@@ -4,14 +4,18 @@ import pika
 from .models import Job, Result
 from IPython import embed
 
+count = 0
+
 
 def store_in_db_cb(ch, method, properties, body):
+    global count
     dict_body = json.loads(body)
-    print (dict_body)
+    print(dict_body)
     job = Job.objects.get(id=dict_body['jobid'])
     result = Result(
         job_id=job,
-        user_id=job.user
+        user_id=job.user,
+        count=count
     )
     if 'max' in dict_body:
         result.max_val = dict_body['max']
@@ -25,6 +29,7 @@ def store_in_db_cb(ch, method, properties, body):
 
 
 def job_accept_cb(ch, method, properties, body):
+    global count
     job_acc_msg = json.loads(body)
     job_id = job_acc_msg['jobid']
     job_instance = Job.objects.get(id=job_id)
@@ -38,7 +43,7 @@ def job_accept_cb(ch, method, properties, body):
             connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
             chan = connection.channel()
             resp = {'jobid': job_id, 'finalop': json.loads(job_instance.services_order)[-1], 'val': row[job_instance.colname]}
-            print (resp)
+            print(resp)
             chan.basic_publish(
                 exchange='',
                 routing_key=output_queue,

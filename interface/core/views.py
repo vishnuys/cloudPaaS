@@ -102,6 +102,7 @@ class UserPage(TemplateView):
 
             resultlist.append({
                 'job_name': res.job_id.name,
+                'count': res.count,
                 'min_val': res.min_val,
                 'max_val': res.max_val,
                 'avg_val': res.avg_val,
@@ -121,10 +122,6 @@ class UserPage(TemplateView):
         with open(filepath, 'wb') as fp:
             for chunk in file.chunks():
                 fp.write(chunk)
-
-        # with open(filepath) as csvfile:
-        #    reader = csv.DictReader(csvfile)
-        #    for row in reader:
 
         job_model = Job(name=jobname, data_type=datatype, user=request.user, services_order=serviceslist, filepath=filepath, colname=colname)
         node = Node.objects.first()
@@ -153,7 +150,6 @@ class UserPage(TemplateView):
 class FileDownload(TemplateView):
 
     def get(self, request, name):
-        print(name)
         filepath = os.path.join(ARCHIVE_DIR, name)
         if not os.path.exists(filepath):
             print('NOT FOUND')

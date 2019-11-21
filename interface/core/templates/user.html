@@ -71,6 +71,7 @@
 										<tr>
 											<th>Sl. No.</th>
 											<th>Job Name</th>
+											<th>Count</th>
 											<th>Min</th>
 											<th>Max</th>
 											<th>Average</th>
@@ -81,10 +82,11 @@
 										{% for res in results %}
 										<tr>
 											<td>{{forloop.counter}}</td>
-											<td>{{res.job_name}}</td>
-											<td>{{res.min_val}}</td>
-											<td>{{res.max_val}}</td>
-											<td>{{res.avg_val}}</td>
+											<td>{{res.job_name|default_if_none:'NA'}}</td>
+											<td>{{res.count|default_if_none:'NA'}}</td>
+											<td>{{res.min_val|default_if_none:'NA'}}</td>
+											<td>{{res.max_val|default_if_none:'NA'}}</td>
+											<td>{{res.avg_val|default_if_none:'NA'}}</td>
 											<td>
 												{% if res.filename %}
 												<a href="{{res.filepath}}">{{res.filename}}</a>
