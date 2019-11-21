@@ -2,6 +2,7 @@ import os
 import json
 import pika
 import threading
+import mimetypes
 from IPython import embed
 from .helper import job_accept_cb
 from .models import Job, Node, Result
@@ -12,7 +13,7 @@ from django.views.generic import TemplateView
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, FileResponse
 
 
 # Create your views here.
@@ -92,12 +93,20 @@ class UserPage(TemplateView):
             })
         results = Result.objects.filter(user_id=request.user)
         for res in results:
+            if res.filepath is not None:
+                filename = os.path.basename(res.filepath)
+                filepath = os.path.join('/file', filename)
+            else:
+                filename = None
+                filepath = None
+
             resultlist.append({
                 'job_name': res.job_id.name,
                 'min_val': res.min_val,
                 'max_val': res.max_val,
                 'avg_val': res.avg_val,
-                'filepath': os.path.basename(res.filepath) if res.filepath is not None else None,
+                'filename': filename,
+                'filepath': filepath,
             })
         return render(request, 'user.html', {'jobs': joblist, 'results': resultlist})
 
@@ -139,3 +148,15 @@ class UserPage(TemplateView):
         x = threading.Thread(target=channel.start_consuming)
         x.start()
         return HttpResponse('Success')
+
+
+class FileDownload(TemplateView):
+
+    def get(self, request, name):
+        print(name)
+        filepath = os.path.join(ARCHIVE_DIR, name)
+        if not os.path.exists(filepath):
+            print('NOT FOUND')
+            return HttpResponseNotFound('File not found')
+        response = FileResponse(open(filepath, 'rb'), as_attachment=True)
+        return response

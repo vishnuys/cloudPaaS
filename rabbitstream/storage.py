@@ -27,7 +27,7 @@ def store_function(ch, method, properties, body):
     chan = connection.channel()
 
     filepath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                            'interface', 'archive_files', input_queue + '_storage')
+                            'interface', 'archive_files', input_queue + '_storage.txt')
 
     print(body)
     body_json = json.loads(body)

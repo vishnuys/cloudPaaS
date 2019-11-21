@@ -28,4 +28,5 @@ urlpatterns = [
     path('logout/', views.LogoutPage.as_view()),
     path('dashboard/admin/', views.AdminPage.as_view()),
     path('dashboard/user/', views.UserPage.as_view()),
+    path('file/<name>/', views.FileDownload.as_view()),
 ]

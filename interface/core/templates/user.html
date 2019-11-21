@@ -85,7 +85,13 @@
 											<td>{{res.min_val}}</td>
 											<td>{{res.max_val}}</td>
 											<td>{{res.avg_val}}</td>
-											<td>{{res.filepath}}</td>
+											<td>
+												{% if res.filename %}
+												<a href="{{res.filepath}}">{{res.filename}}</a>
+												{% else %}
+												NA
+												{% endif %}
+											</td>
 										</tr>
 										{% empty %}
 										<tr><td class="text-center" colspan="6">No results available yet . Please start a job or wait for the job to complete</td></tr>
