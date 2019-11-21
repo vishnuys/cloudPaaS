@@ -27,7 +27,7 @@ def update_max(ch, method, properties, body):
     body_json = json.loads(body)
     val = body_json['val']
     final_op = body_json['finalop']
-    if val == b'FINAL':
+    if val == 'FINAL':
         if final_op == 'max':
             chan.basic_publish(
                 exchange='', routing_key=output_queue,
@@ -39,6 +39,7 @@ def update_max(ch, method, properties, body):
         chan.queue_delete(queue=input_queue)
         connection.close()
         sys.exit()
+        return
 
     max_val = max(max_val, float(val))
     body_json['max'] = max_val

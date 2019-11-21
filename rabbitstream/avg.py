@@ -29,7 +29,7 @@ def update_min(ch, method, properties, body):
     body_json = json.loads(body)
     val = body_json['val']
     final_op = body_json['finalop']
-    if val == b'FINAL':
+    if val == 'FINAL':
         if final_op == 'avg':
             chan.basic_publish(
                 exchange='', routing_key=output_queue,

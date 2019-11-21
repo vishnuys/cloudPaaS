@@ -35,7 +35,7 @@ def store_function(ch, method, properties, body):
     val = body_json['val']
     final_op = body_json['finalop']
     if final_op == 'storage':
-        if val == b'FINAL':
+        if val == 'FINAL':
             chan.basic_publish(exchange='', routing_key=final_queue, body=json.dumps(body_json))
             chan.queue_delete(queue=input_queue)
             connection.close()

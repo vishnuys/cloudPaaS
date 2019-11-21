@@ -2,6 +2,7 @@ import sys
 import pika
 import json
 import subprocess
+import time
 
 job_queue = sys.argv[1]
 job_accept_queue = 'job_accept_queue'
@@ -29,6 +30,7 @@ def job_message_cb(ch, method, properties, body):
         subprocess.Popen(command, shell=True)
         input_queue = op_out_queue
 
+    time.sleep(2)
     connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
     channel_ = connection.channel()
     job_info = {'jobid': job_id}

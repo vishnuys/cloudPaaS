@@ -28,7 +28,9 @@ def update_min(ch, method, properties, body):
     body_json = json.loads(body)
     val = body_json['val']
     final_op = body_json['finalop']
-    if val == b'FINAL':
+    print ('Val == FINAL is :')
+    print (val == 'FINAL')
+    if val == 'FINAL':
         if final_op == 'min':
             chan.basic_publish(
                 exchange='', routing_key=output_queue,
@@ -40,6 +42,7 @@ def update_min(ch, method, properties, body):
         chan.queue_delete(queue=input_queue)
         connection.close()
         sys.exit()
+        return
 
     min_val = min(min_val, float(val))
     body_json['min'] = min_val
