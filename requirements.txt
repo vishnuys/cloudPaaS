@@ -31,7 +31,7 @@ pickleshare==0.7.5
 pika==1.1.0
 prompt-toolkit==2.0.10
 ptyprocess==0.6.0
-pubnub==4.1.6
+pubnub==7.3.0
 pycryptodomex==3.19.1
 Pygments==2.7.4
 python-dateutil==2.8.1
